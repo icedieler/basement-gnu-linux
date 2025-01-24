@@ -1,0 +1,31 @@
+inherit: [make, cpackage, install]
+
+metaEnvironment:
+    PKG_LICENSE: "GPL-2.0-or-later"
+    PKG_VERSION: "3.17"
+
+checkoutSCM:
+    scm: url
+    url: https://codeberg.org/thejessesmith/sysvinit/releases/download/${PKG_VERSION}/sysvinit-${PKG_VERSION}.tar.xz
+    digestSHA256: 897961b2c50a56c202b7b70386b2074df04ab652390e6ee9aeae5a1176fc41f0
+    stripComponents: 1
+
+depends:
+    - libs::libxcrypt-dev
+    - use: []
+      depends:
+          - libs::libxcrypt-tgt
+
+buildVars: [CC, AR]
+buildTools: [target-toolchain]
+buildSetup: |
+    export CFLAGS="${CFLAGS:-} $CPPFLAGS"
+buildScript: |
+    mkdir -p build
+    rsync -a --delete $1/ build/
+    pushd build
+    makeParallel -C $(pwd)/src
+    make -C $(pwd)/src DESTDIR=$(pwd)/../install install
+
+provideDeps: ['*-tgt']
+packageScript: installPackageTgt $1/install/
