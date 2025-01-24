@@ -9,6 +9,10 @@ Config:
         type: bool
         default: false
         help: Enable support for Intel's KMS API.
+    LIBDRM_VMWGFX:
+        type: bool
+        default: false
+        help: Enable support for vmgfx's KMS API.
 
 depends:
     - name: libs::xorg::libpciaccess-dev
@@ -27,7 +31,7 @@ checkoutSCM:
     digestSHA256: 45ba9983b51c896406a3d654de81d313b953b76e6391e2797073d543c5f617d5
     stripComponents: 1
 
-buildVars: [LIBDRM_INTEL]
+buildVars: [LIBDRM_INTEL, LIBDRM_VMWGFX]
 buildScript: |
     FEATURE=( disabled enabled )
 
@@ -38,7 +42,7 @@ buildScript: |
         -Dradeon=disabled \
         -Damdgpu=disabled \
         -Dnouveau=disabled \
-        -Dvmwgfx=disabled \
+        -Dvmwgfx=${FEATURE[$LIBDRM_VMWGFX]} \
         -Domap=disabled \
         -Detnaviv=disabled \
         -Dexynos=disabled \
