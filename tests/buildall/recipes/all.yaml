@@ -194,6 +194,7 @@ depends:
 
     - utils::acpica
     - utils::brtools
+    - utils::chipsec
     - utils::cpio
     - utils::cryptsetup
     - utils::dmidecode

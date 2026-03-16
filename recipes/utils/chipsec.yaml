@@ -1,0 +1,32 @@
+inherit: ['python3::setuptools', 'python3::cext', make, patch]
+
+metaEnvironment:
+    PKG_VERSION: "1.13.20"
+    PKG_LICENSE: "GPL-2.0-only"
+
+depends:
+    - tools:
+          target-toolchain: host-compat-toolchain
+      name: devel::nasm
+      use: [tools]
+    - kernel::linux-kmod-dist
+
+checkoutSCM:
+    scm: url
+    url: ${GITHUB_MIRROR}/chipsec/chipsec/releases/download/${PKG_VERSION}/chipsec-${PKG_VERSION}.zip
+    digestSHA256: b4ac10a4833f5132e040f92ed74d3f20b1dd1dd1ada81339775a61251a34a61a
+
+checkoutDeterministic: True
+checkoutScript: |
+    patchApplySeries $<@chipsec/*.patch@>
+
+buildVars: [CC, LD]
+buildSetup: |
+    export KSRC=${BOB_DEP_PATHS['kernel::linux-kmod-dist']}
+    export CFLAGS="${CFLAGS} -Wno-error=missing-prototypes"
+buildTools: [nasm]
+buildScript: |
+    python3BuildSetuptools $1
+
+packageScript: |
+    python3PackageTgt
