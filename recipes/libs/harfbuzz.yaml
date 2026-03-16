@@ -5,6 +5,11 @@ metaEnvironment:
     PKG_LICENSE: "MIT"
 
 depends:
+    - name: libs::glib-tools
+      use: [tools]
+      tools:
+          target-toolchain: host-compat-toolchain
+
     - libs::cairo-dev
     - libs::freetype-dev
     - libs::glib-dev
