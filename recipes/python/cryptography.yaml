@@ -1,0 +1,65 @@
+inherit: [cargo, "python3::build"]
+
+metaEnvironment:
+    PKG_VERSION: "46.0.5"
+    PKG_LICENSE: "Apache-2.0 OR BSD-3-Clause"
+
+checkoutSCM:
+    scm: url
+    url: ${GITHUB_MIRROR}/pyca/cryptography/archive/refs/tags/${PKG_VERSION}.tar.gz
+    digestSHA256: 7571f0e09a6d6eb22168993f94d35867b4dcbd0d34224e0eb7b392b905b3f12f
+    stripComponents: 1
+
+depends:
+    - tools:
+          target-toolchain: host-compat-toolchain
+      depends:
+          - name: python::maturin
+            alias: python::maturin-host
+            use: [tools]
+          - python::cffi
+          - name: libs::openssl-dev
+            alias: openssl-host
+            use: [result]
+
+    - python::setuptools-rust
+    - python::pycparser
+    - python::semantic-version
+    - libs::openssl-dev
+    - use: []
+      depends:
+          - libs::openssl-tgt
+
+checkoutDeterministic: True
+checkoutScript: |
+    cargoFetchDeps
+
+buildTools: [host-toolchain, target-toolchain, maturin]
+buildSetup: |
+    # provide openssl dir
+    export OPENSSL_DIR=${BOB_DEP_PATHS['libs::openssl-dev']}/usr/
+    # caro builds a native-tool depending on python::cffi
+    export HOST_CC=gcc
+    export CARGO_BUILD_RUSTFLAGS="-C link-arg=-L${BOB_DEP_PATHS['openssl-host']}/usr/lib"
+
+buildScript: |
+    # without a git directory maturin fails with:
+    # fatal: not a git repository (or any parent up to mount point
+    #   dev/build/python/cryptography/2)
+    # See https://github.com/pyca/cryptography/issues/11845
+    git init .
+
+    # build wheel to avoid
+    # ERROR Source /tmp/build-via-sdist-5zco0pfp/cryptography-46.0.5 does
+    #       not appear to be a Python project
+    # See: https://github.com/pyca/cryptography/issues/11845
+    python3Build -w $1
+
+packageScript: |
+    python3PackageTgt
+
+provideDeps:
+    - python::setuptools-rust
+    - python::pycparser
+    - python::semantic-version
+    - '*-tgt'
