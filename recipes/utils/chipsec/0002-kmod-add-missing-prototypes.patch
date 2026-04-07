@@ -1,0 +1,47 @@
+diff -Nurp a/drivers/linux/chipsec_km.c b/drivers/linux/chipsec_km.c
+--- a/drivers/linux/chipsec_km.c	2026-01-31 00:44:59.000000000 +0100
++++ b/drivers/linux/chipsec_km.c	2026-03-16 08:33:04.901657276 +0100
+@@ -258,6 +258,34 @@ typedef SMI_CONTEXT SMI_CTX, *PSMI_CTX;
+     uint16_t *address // rdi
+    );
+ 
++ uint32_t ReadPCICfg(
++   uint8_t bus,
++   uint8_t dev,
++   uint8_t fun,
++   uint8_t off,
++   uint8_t len // 1, 2, 4 bytes
++   );
++
++ void WritePCICfg(
++   uint8_t bus,
++   uint8_t dev,
++   uint8_t fun,
++   uint8_t off,
++   uint8_t len, // 1, 2, 4 bytes
++   uint32_t val
++   );
++
++  void WriteIOPort(
++    uint32_t value,
++    uint16_t io_port,
++    uint8_t len // 1, 2, 4 bytes
++    );
++  
++  uint32_t ReadIOPort(
++    uint16_t io_port,
++    uint8_t len // 1, 2, 4 bytes
++    );
++
+ uint32_t
+ ReadPCICfg(
+   uint8_t bus,
+@@ -718,6 +746,8 @@ static loff_t memory_lseek(struct file *
+ }
+ 
+ #ifdef EFI_NOT_READY
++void print_stat(efi_status_t stat);
++
+ void print_stat(efi_status_t stat)
+ {
+     switch (stat) {

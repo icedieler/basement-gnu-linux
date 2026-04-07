@@ -1,0 +1,14 @@
+# Pass CC and LD to the kernel module makefile to support cross compilation
+diff -Nurp a/setup.py b/setup.py
+--- a/setup.py	2026-01-31 00:44:59.000000000 +0100
++++ b/setup.py	2026-03-16 08:33:04.873656735 +0100
+@@ -85,7 +85,8 @@ class build_ext(_build_ext):
+         # We copy the drivers extension to the build directory.
+         self.copy_tree(os.path.join('drivers', 'linux'), build_driver)
+         # Run the makefile there.
+-        subprocess.check_output(['make', '-C', build_driver])
++        subprocess.check_output(['make', '-C', build_driver,
++                                 "CC="+os.getenv('CC'), "LD="+os.getenv('LD')])
+         # And copy the resulting .ko to the right place.
+         # That is to the source directory if we are in 'develop' mode,
+         # otherwise to the helper subdirectory in the build directory.
