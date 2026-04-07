@@ -22,8 +22,10 @@ depends:
     - graphics::fonts::xorg::schumacher-misc
     - graphics::fonts::xorg::sony-misc
     - graphics::fonts::xorg::sun-misc
+    - graphics::freerdp
     - graphics::imagemagick
     - graphics::kmscube
+    - graphics::ratpoison
 
     - graphics::wayland::wayland
 
@@ -31,6 +33,7 @@ depends:
     - kernel::linux-image
 
     - libs::alsa-lib-tgt
+    - libs::appstream-tgt
     - libs::libassuan-tgt
     - libs::libksba-tgt
     - libs::botan-tgt
@@ -40,6 +43,7 @@ depends:
     - libs::dbus-glib-tgt
     - libs::double-conversion-tgt
     - libs::elfutils
+    - libs::fltk-tgt
     - libs::fontconfig-tgt
     - libs::freetype-tgt
     - libs::fribidi-tgt
@@ -105,6 +109,7 @@ depends:
     - libs::qt6-wayland-tgt
     - libs::slirp-tgt
     - libs::tinyxml2-tgt
+    - libs::libxmlb-tgt
     - libs::yajl-tgt
 
     - multimedia::alsa-utils
@@ -229,6 +234,7 @@ depends:
     - utils::strace
     - utils::sysbench
     - utils::tidy
+    - utils::tigervnc
     - utils::ttysnoop
     - utils::usbutils
     - utils::qpdf
