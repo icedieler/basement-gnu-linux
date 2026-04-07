@@ -1,31 +1,48 @@
 inherit: [meson]
 
 metaEnvironment:
-    PKG_VERSION: "2.4.123"
+    PKG_VERSION: "2.4.131"
     PKG_LICENSE: "MIT"
 
+Config:
+    LIBDRM_INTEL:
+        type: bool
+        default: false
+        help: Enable support for Intel's KMS API.
+    LIBDRM_VMWGFX:
+        type: bool
+        default: false
+        help: Enable support for vmgfx's KMS API.
+
 depends:
+    - name: libs::xorg::libpciaccess-dev
+      if: "${LIBDRM_INTEL}"
     - virtual::core::udev-dev
 
     - use: []
       depends:
+          - name: libs::xorg::libpciaccess-tgt
+            if: "${LIBDRM_INTEL}"
           - virtual::core::udev-tgt
 
 checkoutSCM:
     scm: url
     url: https://dri.freedesktop.org/libdrm/libdrm-${PKG_VERSION}.tar.xz
-    digestSHA1: d61f31495f931d53971fa61686239483c25c2a86
+    digestSHA256: 45ba9983b51c896406a3d654de81d313b953b76e6391e2797073d543c5f617d5
     stripComponents: 1
 
+buildVars: [LIBDRM_INTEL, LIBDRM_VMWGFX]
 buildScript: |
+    FEATURE=( disabled enabled )
+
     mesonBuild $1 \
         -Dcairo-tests=disabled \
         -Dman-pages=disabled \
-        -Dintel=disabled \
+        -Dintel=${FEATURE[$LIBDRM_INTEL]} \
         -Dradeon=disabled \
         -Damdgpu=disabled \
         -Dnouveau=disabled \
-        -Dvmwgfx=disabled \
+        -Dvmwgfx=${FEATURE[$LIBDRM_VMWGFX]} \
         -Domap=disabled \
         -Detnaviv=disabled \
         -Dexynos=disabled \
